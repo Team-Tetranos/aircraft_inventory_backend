@@ -84,27 +84,27 @@ WSGI_APPLICATION = 'aircraft_inventory_system.wsgi.application'
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'tetranos_ac_inventory',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#         'USER': 'tetranos_dev_tetranos',
-#         'PASSWORD': 'dev_tetranos'
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'aircraft_inventory',
-        'HOST': '127.0.0.1',
+        'NAME': 'tetranos_ac_inventory',
+        'HOST': 'localhost',
         'PORT': '3306',
-        'USER': 'root',
-        'PASSWORD': 'mysql_2016'
+        'USER': 'tetranos_dev_tetranos',
+        'PASSWORD': 'dev_tetranos'
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'aircraft_inventory',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+#         'USER': 'root',
+#         'PASSWORD': 'mysql_2016'
+#     }
+# }
 
 
 # Password validation
