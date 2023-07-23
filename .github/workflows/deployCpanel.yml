@@ -17,4 +17,4 @@ jobs:
         server: ftp.tetranos.com
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /home/tetranos/tetranos.com/dev_tetranos
+        server-dir: /home/tetranos/tetranos.com/dev_tetranos/
