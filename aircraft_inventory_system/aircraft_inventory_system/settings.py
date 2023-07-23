@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-+sz*%yz*7*mi961x(dqi(vw!sik5fq6cf%_lhs%f)h6v8o8x_=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'tetranos.com',
+    'www.tetranos.com',
+    '*'
+    ]
 
 
 # Application definition
@@ -73,10 +77,32 @@ WSGI_APPLICATION = 'aircraft_inventory_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'tetranos_ac_inventory',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#         'USER': 'tetranos_dev_tetranos',
+#         'PASSWORD': 'dev_tetranos'
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'aircraft_inventory',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'USER': 'root',
+        'PASSWORD': 'mysql_2016'
     }
 }
 
