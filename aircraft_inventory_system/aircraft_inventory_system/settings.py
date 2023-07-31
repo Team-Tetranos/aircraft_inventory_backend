@@ -186,8 +186,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.tetranos.com'
-EMAIL_PORT = 465  # Replace with the appropriate port for your SMTP server
+EMAIL_PORT = 587  # Replace with the appropriate port for your SMTP server
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'devteam@tetranos.com'  # Replace with your SMTP server's email
 EMAIL_HOST_PASSWORD = 'devteam@'
+
+MJ_API_KEY = 'ce0d1444f2eeeb810b3bc199ce562cc4'
+MJ_API_SECRET = '9f429b4cd2223204ba4afffbfab04b26'
 
