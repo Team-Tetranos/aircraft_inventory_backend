@@ -14,6 +14,7 @@ def send_otp_via_mail(email):
         send_mail(subject, message, emai_from, [email])
     except Exception as e:
         print(e)
-    user_obj = Otp.objects.get_or_create(email=email)
-    user_obj.otp = otp
-    user_obj.save()
+
+    otp_obj, created = Otp.objects.get_or_create(email=email)
+    otp_obj.otp = otp
+    otp_obj.save()
