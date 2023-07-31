@@ -124,6 +124,7 @@ def reset_password(request):
             email = request.data.get('email')
             password = request.data.get('password')
             user_obj = User.objects.get(email=email)
+
             user_obj.set_password(password)
             user_obj.save()
             return Response({'message': 'Password has be reset', 'key': 'PASSWORD_RESET'},

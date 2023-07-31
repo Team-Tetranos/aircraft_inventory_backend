@@ -52,7 +52,12 @@ def send_otp(request):
                     return Response({'message': 'Otp sent failed', 'key': 'OTP_FAILED'},
                                     status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'error': ErrorDetail(string='Email already exist'), 'key': 'DUPLICATE_EMAIL'},
+
+                if reason=='signup':
+                    error_message = 'Email already exist'
+                else:
+                    error_message = 'Email does not exist'
+                return Response({'error': ErrorDetail(string=error_message), 'key': 'DUPLICATE_EMAIL'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
