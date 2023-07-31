@@ -12,10 +12,17 @@ from .emails import send_otp_via_mail
 # Create your views here.
 
 
-def validate_email(value):
-    if User.objects.filter(email=value).exists():
+def validate_email(value, exist_mail):
+
+    if str(exist_mail) == 'FALSE':
+        print('Yes false')
+        if User.objects.filter(email=value).exists():
+            return False
+        return True
+    else:
+        if User.objects.filter(email=value).exists():
+            return True
         return False
-    return True
 
 
 @api_view(['POST'])
@@ -23,11 +30,12 @@ def send_otp(request):
     if request.method == 'POST':
         try:
             email = request.data.get('email')
-            if validate_email(email):
+            exist_mail = request.data.get('exist_mail')
+            reason = request.data.get('reason')
 
-                result = send_otp_via_mail(email)
+            if validate_email(email, exist_mail):
+                result = send_otp_via_mail(email, reason)
                 if result:
-
                     return Response({'message': 'Otp is sent successfully', 'key': 'OTP_SENT'},
                                     status=status.HTTP_200_OK)
                 else:

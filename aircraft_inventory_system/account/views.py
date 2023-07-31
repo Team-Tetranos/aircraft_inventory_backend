@@ -8,7 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
-
+from otp.models import Otp
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -23,9 +23,15 @@ def validate_email(value):
         return False
     return True
 
-
-
-
+def match_otp(email, otp):
+    try:
+        otp_obj = Otp.objects.get(email=email)
+        if otp_obj.otp == otp:
+            return True
+        else:
+            return False
+    except Exception as e:
+        return False
 
 # Create your views here.
 
@@ -33,9 +39,16 @@ class UserRegistrationView(APIView):
     def post(self, request, format=None):
         try:
             serializer = UserRegistrationSerializer(data=request.data)
-            if validate_email(request.data.get('email')) is False:
-                return Response({'error': ErrorDetail(string='Email already exist'), 'key': 'DUPLICATE_EMAIL'},
+            # if validate_email(request.data.get('email')) is False:
+            #     return Response({'error': ErrorDetail(string='Email already exist'), 'key': 'DUPLICATE_EMAIL'},
+            #                     status=status.HTTP_400_BAD_REQUEST)
+
+            otp = request.data.get('otp')
+
+            if not match_otp(request.data.get('email'), otp):
+                return Response({'error': ErrorDetail(string='Does not match Otp'), 'key': 'OTP_MATCH_FAILED'},
                                 status=status.HTTP_400_BAD_REQUEST)
+
 
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
