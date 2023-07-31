@@ -134,14 +134,13 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'aircraft_inventory',
-#         'HOST': '127.0.0.1',
+#         'NAME': 'tetranos_ac_inventory',
+#         'HOST': '65.109.23.122',
 #         'PORT': '3306',
-#         'USER': 'root',
-#         'PASSWORD': 'mysql_2016'
+#         'USER': 'tetranos_dev_tetranos',
+#         'PASSWORD': 'dev_tetranos'
 #     }
 # }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
