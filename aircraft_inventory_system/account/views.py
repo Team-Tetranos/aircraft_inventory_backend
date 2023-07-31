@@ -9,6 +9,8 @@ from .serializers import UserRegistrationSerializer, UserLoginSerializer
 from profiles.models import Profile
 from profiles.serializers import ProfileSerializer
 from otp.models import Otp
+from rest_framework.decorators import api_view
+
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -23,6 +25,7 @@ def validate_email(value):
         return False
     return True
 
+
 def match_otp(email, otp):
     try:
         otp_obj = Otp.objects.get(email=email)
@@ -32,6 +35,7 @@ def match_otp(email, otp):
             return False
     except Exception as e:
         return False
+
 
 # Create your views here.
 
@@ -48,7 +52,6 @@ class UserRegistrationView(APIView):
             if not match_otp(request.data.get('email'), otp):
                 return Response({'error': ErrorDetail(string='Does not match Otp'), 'key': 'OTP_MATCH_FAILED'},
                                 status=status.HTTP_400_BAD_REQUEST)
-
 
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
@@ -110,4 +113,23 @@ class UserLoginView(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': ErrorDetail(string='Server Error'), 'key': 'SERVER_ERROR'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['POST'])
+def reset_password(request):
+    if request.method == 'POST':
+        try:
+            email = request.data.get('email')
+            password = request.data.get('password')
+            user_obj = User.objects.get(email=email)
+            user_obj.set_password(password)
+            user_obj.save()
+            return Response({'message': 'Password has be reset', 'key': 'PASSWORD_RESET'},
+                            status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
                             status=status.HTTP_400_BAD_REQUEST)
