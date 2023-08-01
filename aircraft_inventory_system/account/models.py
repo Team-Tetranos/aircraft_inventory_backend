@@ -9,7 +9,7 @@ from .manager import CustomUserManager
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    email = models.EmailField(db_index=True, unique=True, max_length=25)
+    email = models.EmailField(db_index=True, unique=True, max_length=250)
     is_verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
     is_staff = models.BooleanField(default=True)

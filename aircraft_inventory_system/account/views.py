@@ -41,6 +41,7 @@ def match_otp(email, otp):
 
 class UserRegistrationView(APIView):
     def post(self, request, format=None):
+
         try:
             serializer = UserRegistrationSerializer(data=request.data)
             # if validate_email(request.data.get('email')) is False:

@@ -16,7 +16,7 @@ class Profile(models.Model):
     last_name = models.CharField(blank=True, null=True,max_length=100)
     email = models.EmailField(blank=True, null=True, max_length=255)
     phone = models.CharField(blank=True, null=True, max_length=15)
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    profile_image = models.ImageField(upload_to='assets/profile_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/user/', include('account.urls')),
     path('api/profile/', include('profiles.urls')),
     path('api/otp/', include('otp.urls')),
+    path('api/aircraft/', include('aircraft.urls'))
 ]
