@@ -28,10 +28,10 @@ class AircraftItem(models.Model):
     expire = models.DateTimeField(blank=True, null=True)
     expenditure = models.CharField(blank=True, null=True, max_length=255)
     rmk = models.CharField(blank=True, null=True, max_length=255)
-    aircraft = models.ForeignKey(Aircraft, on_delete=models.SET_NULL, blank=True, null=True)
+    aircraft = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(upload_to='assets/aircraft_item/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.nomenclature}-{self.aircraft.name}'
+        return f'{self.nomenclature}-{self.aircraft}'

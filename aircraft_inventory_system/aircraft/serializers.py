@@ -1,14 +1,16 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from .models import Aircraft, AircraftItem
 
 
-class AircraftSerializer(ModelSerializer):
+class AircraftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aircraft
         fields = '__all__'
 
 
-class AircraftItemSerializer(ModelSerializer):
+class AircraftItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = AircraftItem
         fields = '__all__'
+
+
