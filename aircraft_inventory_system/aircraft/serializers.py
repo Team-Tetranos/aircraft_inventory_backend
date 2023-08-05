@@ -14,3 +14,7 @@ class AircraftItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AircraftNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Aircraft
+        fields = ['name']

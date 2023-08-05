@@ -13,13 +13,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},  # Make the password field write-only
         }
 
-
-
     def create(self, data):
         user = User(email=data['email'])
         user.set_password(data['password'])
         user.save()
         return user
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         return json.loads(json.dumps(data, cls=UUIDEncoder))
@@ -36,3 +35,8 @@ class UserLoginSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         return json.loads(json.dumps(data, cls=UUIDEncoder))
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'

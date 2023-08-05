@@ -1,15 +1,17 @@
 from account.models import User
 from django.contrib.auth import authenticate
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.serializers import ErrorDetail
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserRegistrationSerializer, UserLoginSerializer
+from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 from profiles.models import Profile
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from profiles.serializers import ProfileSerializer
 from otp.models import Otp
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 
 
 def get_tokens_for_user(user):
@@ -117,7 +119,6 @@ class UserLoginView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @api_view(['POST'])
 def reset_password(request):
     if request.method == 'POST':
@@ -135,3 +136,39 @@ def reset_password(request):
             print(e)
             return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated, IsAdminUser])  # Only superadmins can access these views
+def user_detail(request, id):
+    try:
+        user = get_object_or_404(User, id=id)
+
+        if request.method == 'GET':
+            serializer = UserSerializer(user)
+            send_data = serializer.data
+            send_data.update({'key': 'USER_DETAIL'})
+            return Response(send_data,
+                            status=status.HTTP_200_OK)
+
+        elif request.method == 'PUT':
+            serializer = UserSerializer(user, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                send_data = serializer.data
+                send_data.update({'key': 'USER_UPDATED'})
+                return Response(send_data,
+                                status=status.HTTP_200_OK)
+            return Response({'error': ErrorDetail(string='User update failed'),
+                             'key': 'USER_UPDATE_FAILED'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        elif request.method == 'DELETE':
+            user.delete()
+            return Response({'key': 'USER_DELETED'},
+                            status=status.HTTP_200_OK)
+
+    except Exception as e:
+        print(e)
+        return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
+                        status=status.HTTP_400_BAD_REQUEST)

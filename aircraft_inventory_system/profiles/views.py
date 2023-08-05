@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from .serializers import ProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from .models import Profile
+
 from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 
 
@@ -50,3 +51,7 @@ class ProfileUpdateView(APIView):
                             status=status.HTTP_200_OK)
         return Response({'error': ErrorDetail(string=serializer.errors), 'key': 'SERVER_ERROR'},
                         status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
