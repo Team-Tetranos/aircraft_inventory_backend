@@ -82,6 +82,10 @@ class UserRegistrationView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
+
+
 class UserLoginView(APIView):
 
     def post(self, request, format=None):
@@ -138,37 +142,4 @@ def reset_password(request):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated, IsAdminUser])  # Only superadmins can access these views
-def user_detail(request, id):
-    try:
-        user = get_object_or_404(User, id=id)
 
-        if request.method == 'GET':
-            serializer = UserSerializer(user)
-            send_data = serializer.data
-            send_data.update({'key': 'USER_DETAIL'})
-            return Response(send_data,
-                            status=status.HTTP_200_OK)
-
-        elif request.method == 'PUT':
-            serializer = UserSerializer(user, data=request.data)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                send_data = serializer.data
-                send_data.update({'key': 'USER_UPDATED'})
-                return Response(send_data,
-                                status=status.HTTP_200_OK)
-            return Response({'error': ErrorDetail(string='User update failed'),
-                             'key': 'USER_UPDATE_FAILED'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        elif request.method == 'DELETE':
-            user.delete()
-            return Response({'key': 'USER_DELETED'},
-                            status=status.HTTP_200_OK)
-
-    except Exception as e:
-        print(e)
-        return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
-                        status=status.HTTP_400_BAD_REQUEST)

@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .serializers import AircraftSerializer, AircraftItemSerializer
 from rest_framework.permissions import IsAuthenticated
 from .models import Aircraft, AircraftItem
+from profiles.models import Profile
 
 
 # Create your views here.
@@ -38,12 +39,43 @@ def create_aircraft(request):
 def all_aircraft(request):
     if request.method == 'GET':
         try:
-            aircrafts = Aircraft.objects.all().order_by('-created_at')
-            serializer = AircraftSerializer(aircrafts, many=True)
-            send_data = serializer.data
-            # send_data.update({'key': 'AIRCRAFT_CREATED'})
-            return Response(send_data,
-                            status=status.HTTP_200_OK)
+            if request.user.is_superuser:
+                aircrafts = Aircraft.objects.all().order_by('-created_at')
+                serializer = AircraftSerializer(aircrafts, many=True)
+                send_data = serializer.data
+                # send_data.update({'key': 'AIRCRAFT_CREATED'})
+                return Response(send_data,
+                                status=status.HTTP_200_OK)
+            else:
+                profile = Profile.objects.get(email=request.user.email)
+                permitted_aircraft = profile.permitted_aircrafts.all()
+                serializer = AircraftSerializer(permitted_aircraft, many=True)
+                send_data = serializer.data
+                # send_data.update({'key': 'AIRCRAFT_CREATED'})
+                return Response(send_data,
+                                status=status.HTTP_200_OK)
+
+
+        except Exception as e:
+            print(e)
+            return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def permitted_aircraft(request):
+#     if request.method == 'GET':
+#         try:
+#             if request.user.is_superuser:
+#             aircrafts = Aircraft.objects.all().order_by('-created_at')
+#             serializer = AircraftSerializer(aircrafts, many=True)
+#             send_data = serializer.data
+#             # send_data.update({'key': 'AIRCRAFT_CREATED'})
+#             return Response(send_data,
+#                             status=status.HTTP_200_OK)
+
+
 
         except Exception as e:
             print(e)

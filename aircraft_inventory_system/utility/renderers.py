@@ -10,12 +10,13 @@ class CustomRenderer(JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
         # Check if the data is an error response
         response = ''
-        print(data)
+        #print(data)
         key = None
         try:
             key = data.get('key')
             del data['key']
         except Exception as e:
+            key = 'BOOM'
             print(e)
         if 'ErrorDetail' in str(data):
             response = json.dumps({'error': True, 'key': key, 'data': data})
