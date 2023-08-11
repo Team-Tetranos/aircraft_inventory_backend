@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'account',
     'profiles',
     'otp',
-    'aircraft'
+    'aircraft',
+    'ac_stock',
+    'stock_history'
 
 
 ]

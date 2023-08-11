@@ -24,5 +24,7 @@ urlpatterns = [
     path('api/user/', include('account.urls')),
     path('api/profile/', include('profiles.urls')),
     path('api/otp/', include('otp.urls')),
-    path('api/aircraft/', include('aircraft.urls'))
+    path('api/aircraft/', include('aircraft.urls')),
+    path('api/stock-record/', include('ac_stock.urls')),
+    path('api/stock-history/', include('stock_history.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
