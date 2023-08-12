@@ -6,4 +6,6 @@ urlpatterns = [
     path('create-stock-history/', create_stock_History, name='create-stock-history'),
     path('create-bulk-stock-history/', create_bulk_stock_History, name='create-bulk-stock-history'),
     path('stock-history-by-record/<str:id>/', get_stock_History_by_stock, name='stock-history-by-record'),
+    path('stock-history-by-id/<str:id>/', get_stock_history_by_id, name='stock-history-by-id'),
+
 ]

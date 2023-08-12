@@ -102,3 +102,42 @@ def create_bulk_stock_History(request):
         print(e)
         return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
                         status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'POST', 'DELETE'])
+@permission_classes([IsAuthenticated])  # Only superadmins can access these views
+def get_stock_history_by_id(request, id):
+    try:
+        stocks = StockHistory.objects.get(id=id)
+        print(request.data)
+    except stocks.DoesNotExist:
+        return Response(
+            {'error': ErrorDetail(string='Stock History does not exist', ), 'key': 'STOCK_HISTORY_NOT_FOUND'},
+            status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'GET':
+        stock_serializer = StockHistorySerializer(stocks)
+        send_data = stock_serializer.data
+        send_data.update({'key': 'STOCK_HISTORY'})
+        return Response(send_data,
+                        status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        serializer = StockHistorySerializer(stocks, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            #print(serializer.data)
+            serializer.save()
+            send_data = serializer.data
+            send_data.update({'key': 'STOCK_HISTORY_UPDATED'})
+            return Response(send_data,
+                            status=status.HTTP_200_OK)
+
+        return Response(
+            {'error': ErrorDetail(string='STOCK_RECORD is not updated', ), 'key': 'STOCK_RECORD_NOT_UPDATED'},
+            status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        stocks.delete()
+        return Response({'key': 'STOCK_RECORD_DELETED'},
+                        status=status.HTTP_200_OK)

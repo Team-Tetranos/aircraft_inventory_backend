@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from profiles.models import Profile
 from ac_stock.models import StockRecord
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete,post_delete, pre_save
 from django.dispatch import receiver
 
 
@@ -29,36 +29,66 @@ class StockHistory(models.Model):
 def stock_history_saved(sender, instance, created, **kwargs):
     if created:
         stock = instance.stock_record
+        total_balance = 0
+        stock_histories = StockHistory.objects.filter(stock_record__id=stock.id)
 
-        if instance.received:
-            stock.balance = stock.balance+instance.quantity
+        for s in stock_histories:
+            if s.received:
+                total_balance += s.quantity
+            else:
+                total_balance -= s.quantity
+        stock.balance = total_balance
 
-        else:
-            stock.balance = stock.balance - instance.quantity
+        stock.save()
+    else:
+        stock = instance.stock_record
+        total_balance = 0
+        stock_histories = StockHistory.objects.filter(stock_record__id=stock.id)
+
+
+        for s in stock_histories:
+            if s.received:
+                total_balance += s.quantity
+            else:
+                total_balance -= s.quantity
+
+        print(total_balance)
+        stock.balance = total_balance
+
         stock.save()
 
         print(f"Task '{instance}' has been created.")
-    else:
-        stock = instance.stock_record
-        if instance.received:
-            stock.balance = stock.balance+instance.quantity
-        else:
-            stock.balance = stock.balance - instance.quantity
-
-        stock.save()
-        print(f"Task '{instance}' has been updated.")
 
 
-@receiver(pre_delete, sender=StockHistory)
+# @receiver(pre_save, sender=StockHistory)
+# def update_stock_balance(sender, instance, **kwargs):
+#     try:
+#         original_instance = sender.objects.get(id=instance.id)
+#     except sender.DoesNotExist:
+#         original_instance = None
+#
+#     if original_instance:
+#         original_balance_change = original_instance.quantity if original_instance.received else -original_instance.quantity
+#         instance.stock_record.balance -= original_balance_change
+#
+#     balance_change = instance.quantity if instance.received else -instance.quantity
+#     instance.stock_record.balance += balance_change
+#     instance.stock_record.save()
+
+
+@receiver(post_delete, sender=StockHistory)
 def stock_history_deleted(sender, instance, **kwargs):
     try:
         stock = instance.stock_record
-        if instance.received:
-            stock.balance = stock.balance - instance.quantity
-        else:
-            stock.balance = stock.balance + instance.quantity
+        total_balance = 0
+        stock_histories = StockHistory.objects.filter(stock_record__id=stock.id)
+
+        for s in stock_histories:
+            if s.received:
+                total_balance += s.quantity
+            else:
+                total_balance -= s.quantity
+        stock.balance = total_balance
         stock.save()
     except Exception as e:
-
-
-        print(f"Task '{instance}' is being deleted.")
+        print(e)
