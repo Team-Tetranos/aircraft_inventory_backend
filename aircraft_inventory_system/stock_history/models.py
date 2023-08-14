@@ -1,4 +1,5 @@
 import uuid
+from datetime import date
 
 from django.db import models
 from profiles.models import Profile
@@ -17,6 +18,7 @@ class StockHistory(models.Model):
     voucher_no = models.TextField(null=True, blank=True)
     quantity = models.IntegerField(default=0, blank=True, null=True)
     image = models.ImageField(upload_to='assets/stock_record_history/', blank=True, null=True)
+    expire = models.DateField(blank=True, null=True)
     received = models.BooleanField(default=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -32,12 +34,18 @@ def stock_history_saved(sender, instance, created, **kwargs):
         total_balance = 0
         stock_histories = StockHistory.objects.filter(stock_record__id=stock.id)
 
+
         for s in stock_histories:
             if s.received:
                 total_balance += s.quantity
             else:
                 total_balance -= s.quantity
         stock.balance = total_balance
+
+        closest_expiry = StockHistory.objects.filter(expire__gte=date.today()).order_by('expire').first()
+        if closest_expiry and closest_expiry.expire > date.today():
+            stock.latest_expiry = closest_expiry.expire
+
 
         stock.save()
     else:
@@ -54,6 +62,10 @@ def stock_history_saved(sender, instance, created, **kwargs):
 
         print(total_balance)
         stock.balance = total_balance
+
+        closest_expiry = StockHistory.objects.filter(expire__gte=date.today()).order_by('expire').first()
+        if closest_expiry and closest_expiry.expire > date.today():
+            stock.latest_expiry = closest_expiry.expire
 
         stock.save()
 
@@ -89,6 +101,9 @@ def stock_history_deleted(sender, instance, **kwargs):
             else:
                 total_balance -= s.quantity
         stock.balance = total_balance
+        closest_expiry = StockHistory.objects.filter(expire__gte=date.today()).order_by('expire').first()
+        if closest_expiry and closest_expiry.expire > date.today():
+            stock.latest_expiry = closest_expiry.expire
         stock.save()
     except Exception as e:
         print(e)

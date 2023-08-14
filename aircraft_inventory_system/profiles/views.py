@@ -45,7 +45,7 @@ class ProfileUpdateView(APIView):
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
-    def put(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         profile = self.get_object()
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():

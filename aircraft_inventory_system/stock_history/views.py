@@ -40,7 +40,7 @@ def get_stock_History_by_stock(request, id):
 
     try:
         if request.method == 'GET':
-            stocks = StockHistory.objects.filter(stock_record__id=id)
+            stocks = StockHistory.objects.filter(stock_record__id=id).order_by('date')
             stock_serializer = StockHistorySerializer(stocks, many=True)
             send_data = stock_serializer.data
             #send_data.update({'key': 'STOCK_RECORD_FOR_AIRCRAFT'})

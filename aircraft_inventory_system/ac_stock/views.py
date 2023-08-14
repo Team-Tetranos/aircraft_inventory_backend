@@ -5,7 +5,7 @@ from rest_framework.exceptions import ErrorDetail
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from .models import StockRecord
-from .serializers import StockRecordSerializer
+from .serializers import StockRecordSerializer, StockHistorySerializerForReport, StockRecordSerializerForReport
 from aircraft.models import Aircraft
 
 
@@ -41,7 +41,7 @@ def create_stock(request):
 def get_stock_by_aircraft(request, id):
     try:
         if request.method == 'GET':
-            stocks = StockRecord.objects.filter(aircraft__id=id)
+            stocks = StockRecord.objects.filter(aircraft__id=id).order_by('-created_at')
             stock_serializer = StockRecordSerializer(stocks, many=True)
             send_data = stock_serializer.data
             # send_data.update({'key': 'STOCK_RECORD_FOR_AIRCRAFT'})
@@ -112,3 +112,27 @@ def all_stock_record(request):
         print(e)
         return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
                         status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Only superadmins can access these views
+def stock_record_report(request):
+    print(request.user)
+    try:
+        if request.method == 'GET':
+            stocks = StockRecord.objects.all()
+            stock_serializer = StockRecordSerializerForReport(stocks, many=True)
+            send_data = stock_serializer.data
+
+            return Response(send_data,
+                            status=status.HTTP_200_OK)
+
+
+    except Exception as e:
+        print(e)
+        return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+
+

@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/aircraft/', include('aircraft.urls')),
     path('api/stock-record/', include('ac_stock.urls')),
     path('api/stock-history/', include('stock_history.urls')),
+    path('api/report/', include('report.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

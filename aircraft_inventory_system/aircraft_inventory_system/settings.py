@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'otp',
     'aircraft',
     'ac_stock',
-    'stock_history'
+    'stock_history',
+    'report'
 
 
 ]

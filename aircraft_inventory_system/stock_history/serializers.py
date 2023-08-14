@@ -13,6 +13,7 @@ from ac_stock.serializers import StockRecordSerializer, StockRecordField
 class StockHistorySerializer(serializers.ModelSerializer):
     created_by = ProfileField(queryset=Profile.objects.all())
     stock_record = StockRecordField(queryset=StockRecord.objects.all())
+
     # created_by = ProfileSerializer(many=False, read_only=True)
     # aircraft = AircraftSerializer(many=False, read_only=True)
 
@@ -51,5 +52,9 @@ class StockHistorySerializer(serializers.ModelSerializer):
         else:
             stock_instance = stock_data
 
-        stock_history_instance = StockHistory.objects.create(created_by=created_by_instance, stock_record=stock_instance, **validated_data)
+        stock_history_instance = StockHistory.objects.create(created_by=created_by_instance,
+                                                             stock_record=stock_instance, **validated_data)
         return stock_history_instance
+
+
+
