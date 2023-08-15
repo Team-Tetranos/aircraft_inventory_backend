@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+    'ckeditor',
+    'ckeditor_uploader',
     "django_mysql",
     'utility',
     'account',
@@ -53,10 +55,14 @@ INSTALLED_APPS = [
     'aircraft',
     'ac_stock',
     'stock_history',
-    'report'
+    'report',
+    'help_desk'
 
 
 ]
+
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
 
 AUTH_USER_MODEL = 'account.User'
 

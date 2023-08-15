@@ -1,4 +1,6 @@
+from django.db.models import Q
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ErrorDetail
@@ -7,6 +9,8 @@ from rest_framework.response import Response
 from .models import StockRecord
 from .serializers import StockRecordSerializer, StockHistorySerializerForReport, StockRecordSerializerForReport
 from aircraft.models import Aircraft
+
+from profiles.models import Profile
 
 
 # Create your views here.
@@ -60,7 +64,7 @@ def get_stock_by_aircraft(request, id):
 def get_stock_by_id(request, id):
     try:
         stocks = StockRecord.objects.get(id=id)
-        #print(request.data)
+        # print(request.data)
     except stocks.DoesNotExist:
         return Response(
             {'error': ErrorDetail(string='Stock Record does not exist', ), 'key': 'STOCK_NOT_FOUND'},
@@ -77,7 +81,7 @@ def get_stock_by_id(request, id):
         serializer = StockRecordSerializer(stocks, data=request.data, partial=True)
 
         if serializer.is_valid():
-            #print(serializer.data)
+            # print(serializer.data)
             serializer.save()
             send_data = serializer.data
             send_data.update({'key': 'STOCK_RECORD_UPDATED'})
@@ -103,7 +107,7 @@ def all_stock_record(request):
             stocks = StockRecord.objects.all()
             stock_serializer = StockRecordSerializer(stocks, many=True)
             send_data = stock_serializer.data
-            #send_data.update({'key': 'STOCK_RECORD_FOR_AIRCRAFT'})
+            # send_data.update({'key': 'STOCK_RECORD_FOR_AIRCRAFT'})
             return Response(send_data,
                             status=status.HTTP_200_OK)
 
@@ -134,5 +138,46 @@ def stock_record_report(request):
                         status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Only superadmins can access these views
+def get_stock_notification(request):
+    try:
+        try:
+            today = timezone.now().date()
+            # Calculate the date for today + 30 days
+            next_30_days = today + timezone.timedelta(days=30)
+            if request.user.is_superuser:
+                stock_records = StockRecord.objects.filter(
+                    Q(balance__lte=2) |
+                    Q(latest_expiry__gte=today, latest_expiry__lte=next_30_days)
+                )
+                serializer = StockRecordSerializer(stock_records, many=True)
+                send_data = serializer.data
+                # send_data.update({'key': 'AIRCRAFT_CREATED'})
+                return Response(send_data,
+                                status=status.HTTP_200_OK)
+            else:
+                profile = Profile.objects.get(email=request.user.email)
+                permitted_aircraft = profile.permitted_aircrafts.all()
+                stock_records = StockRecord.objects.filter(
+                    Q(aircraft__in=permitted_aircraft) &
+                    Q(balance__lte=2) |
+                    Q(latest_expiry__gte=today, latest_expiry__lte=next_30_days)
+                )
+                serializer = StockRecordSerializer(stock_records, many=True)
+                send_data = serializer.data
+                # send_data.update({'key': 'AIRCRAFT_CREATED'})
+                return Response(send_data,
+                                status=status.HTTP_200_OK)
 
 
+        except Exception as e:
+            print(e)
+            return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+    except Exception as e:
+        print(e)
+        return Response({'error': ErrorDetail(string='Server error'), 'key': 'SERVER_ERROR'},
+                        status=status.HTTP_400_BAD_REQUEST)

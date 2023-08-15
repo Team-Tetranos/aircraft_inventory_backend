@@ -4,7 +4,7 @@ from datetime import date
 from django.db import models
 from profiles.models import Profile
 from ac_stock.models import StockRecord
-from django.db.models.signals import post_save, pre_delete,post_delete, pre_save
+from django.db.models.signals import post_save, pre_delete, post_delete, pre_save
 from django.dispatch import receiver
 
 
@@ -34,7 +34,6 @@ def stock_history_saved(sender, instance, created, **kwargs):
         total_balance = 0
         stock_histories = StockHistory.objects.filter(stock_record__id=stock.id)
 
-
         for s in stock_histories:
             if s.received:
                 total_balance += s.quantity
@@ -43,16 +42,14 @@ def stock_history_saved(sender, instance, created, **kwargs):
         stock.balance = total_balance
 
         closest_expiry = StockHistory.objects.filter(expire__gte=date.today()).order_by('expire').first()
-        if closest_expiry and closest_expiry.expire > date.today():
+        if closest_expiry and closest_expiry.expire >= date.today():
             stock.latest_expiry = closest_expiry.expire
-
 
         stock.save()
     else:
         stock = instance.stock_record
         total_balance = 0
         stock_histories = StockHistory.objects.filter(stock_record__id=stock.id)
-
 
         for s in stock_histories:
             if s.received:

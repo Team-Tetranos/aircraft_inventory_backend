@@ -7,4 +7,5 @@ urlpatterns = [
     path('stock-records-by-id/<str:id>/', get_stock_by_id, name='stock-by-id'),
     path('create-stock-records/', create_stock, name='create-stock-record'),
     path('stock-record-report/', stock_record_report, name='stock-record-report'),
+    path('stock-notification/', get_stock_notification, name='stock-notification'),
 ]
