@@ -38,7 +38,7 @@ class ProfileUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        return get_object_or_404(Profile, user=self.request.user)
+        return get_object_or_404(Profile, email=self.request.user.email)
 
     def get(self, request, *args, **kwargs):
         profile = self.get_object()

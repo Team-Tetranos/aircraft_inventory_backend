@@ -13,7 +13,6 @@ from django_mysql.models import ListTextField
 
 class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-
     first_name = models.CharField(blank=True, null=True, max_length=100)
     last_name = models.CharField(blank=True, null=True, max_length=100)
     email = models.EmailField(blank=True, null=True, max_length=255)
