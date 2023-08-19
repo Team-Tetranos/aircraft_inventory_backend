@@ -124,12 +124,30 @@ def stock_record_report(request):
     print(request.user)
     try:
         if request.method == 'GET':
-            stocks = StockRecord.objects.all()
-            stock_serializer = StockRecordSerializerForReport(stocks, many=True)
-            send_data = stock_serializer.data
 
-            return Response(send_data,
-                            status=status.HTTP_200_OK)
+            if request.user.is_superuser:
+                stocks = StockRecord.objects.all()
+                stock_serializer = StockRecordSerializerForReport(stocks, many=True)
+                send_data = stock_serializer.data
+
+                return Response(send_data,
+                                status=status.HTTP_200_OK)
+            else:
+                profile = Profile.objects.get(email=request.user.email)
+                permitted_aircraft = profile.permitted_aircrafts.all()
+                print(permitted_aircraft)
+                stocks = StockRecord.objects.filter(
+                    Q(aircraft__in=permitted_aircraft)
+                )
+                stock_serializer = StockRecordSerializerForReport(stocks, many=True)
+                send_data = stock_serializer.data
+
+                return Response(send_data,
+                                status=status.HTTP_200_OK)
+
+
+
+
 
 
     except Exception as e:
