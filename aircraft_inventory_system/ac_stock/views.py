@@ -159,8 +159,9 @@ def get_stock_notification(request):
             else:
                 profile = Profile.objects.get(email=request.user.email)
                 permitted_aircraft = profile.permitted_aircrafts.all()
+                print(permitted_aircraft)
                 stock_records = StockRecord.objects.filter(
-                    Q(aircraft__in=permitted_aircraft) &
+                    Q(aircraft__in=permitted_aircraft),
                     Q(balance__lte=2) |
                     Q(latest_expiry__gte=today, latest_expiry__lte=next_30_days)
                 )

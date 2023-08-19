@@ -89,6 +89,7 @@ class UserRegistrationView(APIView):
 class UserLoginView(APIView):
 
     def post(self, request, format=None):
+
         try:
             email = request.data.get('email')
             password = request.data.get('password')
